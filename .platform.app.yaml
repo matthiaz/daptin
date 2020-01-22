@@ -1,0 +1,27 @@
+name: app
+
+type: golang:1.13
+
+hooks:
+    build: |
+        git clone https://github.com/daptin/daptin.git src
+        cd src
+        go build -o ../bin/daptin
+        cd ..
+        
+web:
+    upstream:
+        socket_family: tcp
+        protocol: http
+
+    commands:
+        start: '/app/./start_daptin_server.sh && sleep 30'
+    locations:
+        /:
+            allow: false
+            passthru: true
+
+disk: 512
+
+relationships:
+    database: 'mysqldb:mysql'
